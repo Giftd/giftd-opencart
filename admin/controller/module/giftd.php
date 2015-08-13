@@ -119,6 +119,7 @@ class ControllerModuleGiftd extends Controller{
         }else{
             $this->data['giftd_code_updated'] = $this->config->get('giftd_code_updated');
         } 
+        echo 5;
         if($js_code){
             $this->data['giftd_js_code'] = $js_code;
         }elseif($this->config->get('giftd_js_code')){

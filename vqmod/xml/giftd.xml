@@ -67,7 +67,8 @@
                         unset($this->session->data['voucher']);
                     }
                 }
-        }]]></add>
+        }
+        $this->data['discount'] = 0;]]></add>
         </operation>
         <operation error="skip">
             <search position="after"><![CDATA[$this->data['error_warning'] = $this->language->get('error_stock')]]></search>
@@ -84,8 +85,7 @@
         </operation>
         <operation error="skip">
             <search position="before"><![CDATA[($products as $product)]]></search>
-            <add><![CDATA[$this->data['discount'] = 0;
-            $products_cost = 0;]]></add>
+            <add><![CDATA[$products_cost = 0;]]></add>
         </operation>
         <operation error="skip">
             <search position="before"><![CDATA[$this->data['vouchers'] = array();]]></search>
@@ -197,6 +197,27 @@
                     }
                 }
         }]]></add>
+        </operation>
+    </file>
+
+    <file name="catalog/model/checkout/voucher.php">
+        <operation error="skip">
+            <search position="before" offset="2"><![CDATA[?>]]></search>
+            <add><![CDATA[    public function add_giftd_vaucher($data, $amount_total) {
+        $this->load->model('checkout/voucher');
+        
+        $this->session->data['amount_available'] = $data['amount'];
+        $this->session->data['amount_total'] = $amount_total;
+        
+        if(!$this->getVoucher($data['code'])){
+            $this->addVoucher(0, $data);
+        }
+    }
+
+    
+    public function remove_vaucher($code) {
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "voucher` WHERE code = '" . $this->db->escape($code) . "'");
+    }]]></add>
         </operation>
     </file>
 
