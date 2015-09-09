@@ -202,7 +202,7 @@
 
     <file name="catalog/model/checkout/voucher.php">
         <operation error="skip">
-            <search position="before" offset="2"><![CDATA[?>]]></search>
+            <search position="before" offset="1"><![CDATA[?>]]></search>
             <add><![CDATA[    public function add_giftd_vaucher($data, $amount_total) {
         $this->load->model('checkout/voucher');
         
