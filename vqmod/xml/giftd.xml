@@ -78,7 +78,7 @@
         </operation>
         <operation error="skip">
             <search position="after"><![CDATA[($products as $product)]]></search>
-            <add><![CDATA[ if($product['discount']){
+            <add><![CDATA[ if(isset($product['discount']) && $product['discount']){
                     $this->data['discount'] = 1;    
                 }
                 $products_cost += $product['total'];]]></add>
@@ -148,7 +148,7 @@
         </operation>
         <operation error="skip">
             <search position="after"><![CDATA[foreach ($products as $product) {]]></search>
-            <add><![CDATA[            if($product['discount']){
+            <add><![CDATA[            if(isset($product['discount']) && $product['discount']){
                     $this->data['discount'] = 1;    
             }
             
