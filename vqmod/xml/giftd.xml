@@ -256,12 +256,12 @@ $(document).ready(function(){
 
     <file path="catalog/view/theme/*/template/checkout/" name="simplecheckout_cart.tpl">
         <operation error="skip">
-            <search position="bottom"><![CDATA[$footer]]></search>
+            <search position="bottom"><![CDATA[</script>]]></search>
             <add><![CDATA[<?php $total = array_pop($totals);?> 
 <script type="text/javascript"><!--
 $(document).ready(function(){
-    $("#voucher input[name='voucher']").after('<input type="hidden" name="amount_total" value="<?php echo $total['value'] ?>" />');
-    $("#voucher input[name='amount_total']").after('<input type="hidden" name="discount_in_cart" value="<?php echo $discount ?>" />');
+    $("input[name='voucher']").after('<input type="hidden" name="amount_total" value="<?php echo $total['value'] ?>" />');
+    $("input[name='amount_total']").after('<input type="hidden" name="discount_in_cart" value="<?php echo $discount ?>" />');
 });
 //--></script>
 ]]></add>
