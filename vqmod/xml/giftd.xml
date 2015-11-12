@@ -233,7 +233,7 @@
 
     <file path="catalog/view/theme/*/template/common/" name="header.tpl">
         <operation error="skip">
-            <search position="after"><![CDATA[<body]]></search>
+            <search position="after"><![CDATA[<body>]]></search>
             <add><![CDATA[<script type="text/javascript"><!--
             <?php echo $giftd_js_code ?>
             //--></script>]]></add>
