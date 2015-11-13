@@ -32,7 +32,7 @@
             <add><![CDATA[        if(isset($this->request->post['voucher']) && (strripos($this->request->post['voucher'], $this->config->get('giftd_prefix')) !== false)){
             $this->load->model('checkout/voucher');
             
-                $giftd_data = file_get_contents('https://api.giftd.ru/v1/gift/check?token=' . $this->request->post['voucher'] . '&api_key=' . $this->config->get('giftd_api_key'));
+                $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/check?token=' . $this->request->post['voucher'] . '&api_key=' . $this->config->get('giftd_api_key'));
                 $giftd_data = json_decode($giftd_data);
 
                 if($giftd_data->type == 'data'){
@@ -99,7 +99,7 @@
     <file name="catalog/controller/checkout/confirm.php">
         <operation error="skip">
             <search position="before"><![CDATA[$this->data['totals'] = $total_data;]]></search>
-            <add><![CDATA[            $giftd_data = file_get_contents('https://api.giftd.ru/v1/gift/charge?token=' . $this->session->data['voucher'] . '&api_key=' . $this->config->get('giftd_api_key') . '&amount=' . $this->session->data['amount_available'] .'&amount_total=' . $this->session->data['amount_total'] . '&external_id=' . (isset($this->session->data['order_id']) ? $this->session->data['order_id'] : null));
+            <add><![CDATA[            $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/charge?token=' . $this->session->data['voucher'] . '&api_key=' . $this->config->get('giftd_api_key') . '&amount=' . $this->session->data['amount_available'] .'&amount_total=' . $this->session->data['amount_total'] . '&external_id=' . (isset($this->session->data['order_id']) ? $this->session->data['order_id'] : null));
             $giftd_data = json_decode($giftd_data);
             
             unset($this->session->data['amount_available']);
@@ -121,7 +121,7 @@
         <operation error="skip">
             <search position="after"><![CDATA[$order_id = $this->order();]]></search>
             <add><![CDATA[                if(isset($this->session->data['voucher']) && $this->session->data['voucher']){
-                    $giftd_data = file_get_contents('https://api.giftd.ru/v1/gift/charge?token=' . $this->session->data['voucher'] . '&api_key=' . $this->config->get('giftd_api_key') . '&amount=' . $this->session->data['amount_available'] .'&amount_total=' . $this->session->data['amount_total'] . '&external_id=' . $order_id);
+                    $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/charge?token=' . $this->session->data['voucher'] . '&api_key=' . $this->config->get('giftd_api_key') . '&amount=' . $this->session->data['amount_available'] .'&amount_total=' . $this->session->data['amount_total'] . '&external_id=' . $order_id);
                     $giftd_data = json_decode($giftd_data);
                     
                     unset($this->session->data['amount_available']);
@@ -166,7 +166,7 @@
             <add><![CDATA[if(isset($this->request->post['voucher']) && (strripos($this->request->post['voucher'], $this->config->get('giftd_prefix')) !== false)){#
             $this->load->model('checkout/voucher');
 
-                $giftd_data = file_get_contents('https://api.giftd.ru/v1/gift/check?token=' . $this->request->post['voucher'] . '&api_key=' . $this->config->get('giftd_api_key'));
+                $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/check?token=' . $this->request->post['voucher'] . '&api_key=' . $this->config->get('giftd_api_key'));
                 $giftd_data = json_decode($giftd_data);
 
                 if($giftd_data->type == 'data'){
