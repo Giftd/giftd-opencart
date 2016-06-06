@@ -3,10 +3,10 @@ class ControllerModuleGiftd extends Controller{
     private $error = array();
     
     public function index(){   
-        $this->load->language('module/giftd');
+        $this->language->load('module/giftd');
 
         $this->document->setTitle($this->language->get('heading_title'));
-       
+        
         $this->load->model('setting/setting');
                 
         if(($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()){
@@ -19,120 +19,121 @@ class ControllerModuleGiftd extends Controller{
             
             $this->session->data['success'] = $this->language->get('text_success');
                         
-            $this->response->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
+            $this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
         }
                 
-        $data['heading_title'] = $this->language->get('heading_title');
+        $this->data['heading_title'] = $this->language->get('heading_title');
 
-        $data['text_api_key']      = $this->language->get('text_api_key');
-        $data['text_user_id']      = $this->language->get('text_user_id');
-        $data['text_partner_code'] = $this->language->get('text_partner_code');
-        $data['text_prefix']       = $this->language->get('text_prefix');        
+        $this->data['text_api_key']      = $this->language->get('text_api_key');
+        $this->data['text_user_id']      = $this->language->get('text_user_id');
+        $this->data['text_partner_code'] = $this->language->get('text_partner_code');
+        $this->data['text_prefix']       = $this->language->get('text_prefix');        
         
-        $data['button_save']   = $this->language->get('button_save');
-        $data['button_cancel'] = $this->language->get('button_cancel');
-        $data['button_remove'] = $this->language->get('button_remove');
+        $this->data['button_save']   = $this->language->get('button_save');
+        $this->data['button_cancel'] = $this->language->get('button_cancel');
+        $this->data['button_remove'] = $this->language->get('button_remove');
         
          if (isset($this->error['warning'])) {
-            $data['error_warning'] = $this->error['warning'];
+            $this->data['error_warning'] = $this->error['warning'];
         } else {
-            $data['error_warning'] = '';
+            $this->data['error_warning'] = '';
         }
         
         if (isset($this->error['image'])) {
-            $data['error_image'] = $this->error['image'];
+            $this->data['error_image'] = $this->error['image'];
         } else {
-            $data['error_image'] = array();
+            $this->data['error_image'] = array();
         }
         
-        $data['breadcrumbs'] = array();
+        $this->data['breadcrumbs'] = array();
 
-        $data['breadcrumbs'][] = array(
+        $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_home'),
             'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => false
         );
 
-        $data['breadcrumbs'][] = array(
+        $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_module'),
             'href'      => $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
         
-        $data['breadcrumbs'][] = array(
+        $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('heading_title'),
             'href'      => $this->url->link('module/giftd', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
         
-        $data['action'] = $this->url->link('module/giftd', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['action'] = $this->url->link('module/giftd', 'token=' . $this->session->data['token'], 'SSL');
         
-        $data['cancel'] = $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['cancel'] = $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL');
         
         if(isset($this->request->post['giftd_api_key'])){
-            $data['giftd_api_key'] = $this->request->post['giftd_api_key'];
+            $this->data['giftd_api_key'] = $this->request->post['giftd_api_key'];
         }elseif($this->config->get('giftd_api_key')){ 
-            $data['giftd_api_key'] = $this->config->get('giftd_api_key');
+            $this->data['giftd_api_key'] = $this->config->get('giftd_api_key');
         }else{
-            $data['giftd_api_key'] = '';
+            $this->data['giftd_api_key'] = '';
         }
         
         if(isset($this->request->post['giftd_user_id'])){
-            $data['giftd_user_id'] = $this->request->post['giftd_user_id'];
+            $this->data['giftd_user_id'] = $this->request->post['giftd_user_id'];
         }elseif($this->config->get('giftd_user_id')){ 
-            $data['giftd_user_id'] = $this->config->get('giftd_user_id');
+            $this->data['giftd_user_id'] = $this->config->get('giftd_user_id');
         }else{
-            $data['giftd_user_id'] = '';
+            $this->data['giftd_user_id'] = '';
         }
         
-        if($data['giftd_user_id'] && $data['giftd_api_key']){
-            $partner_data = $this->get_data($data['giftd_user_id'], $data['giftd_api_key']);
+        if($this->data['giftd_user_id'] && $this->data['giftd_api_key']){
+            $partner_data = $this->get_data($this->data['giftd_user_id'], $this->data['giftd_api_key']);
         }
         
         if(isset($this->request->post['giftd_partner_code'])){
-            $data['giftd_partner_code'] = $this->request->post['giftd_partner_code'];
+            $this->data['giftd_partner_code'] = $this->request->post['giftd_partner_code'];
         }elseif($this->config->get('giftd_partner_code')){ 
-            $data['giftd_partner_code'] = $this->config->get('giftd_partner_code');
+            $this->data['giftd_partner_code'] = $this->config->get('giftd_partner_code');
         }elseif(isset($partner_data['data']['code']) && ($partner_data['data']['code'])){ 
-            $data['giftd_partner_code'] = $partner_data['data']['code'];
+            $this->data['giftd_partner_code'] = $partner_data['data']['code'];
         }else{
-            $data['giftd_partner_code'] = '';
+            $this->data['giftd_partner_code'] = '';
         }                
         
         if(isset($this->request->post['giftd_prefix'])){
-            $data['giftd_prefix'] = $this->request->post['giftd_prefix'];
+            $this->data['giftd_prefix'] = $this->request->post['giftd_prefix'];
         }elseif($this->config->get('giftd_prefix')){ 
-            $data['giftd_prefix'] = $this->config->get('giftd_prefix');
+            $this->data['giftd_prefix'] = $this->config->get('giftd_prefix');
         }elseif(isset($partner_data['data']['token_prefix']) && ($partner_data['data']['token_prefix'])){ 
-            $data['giftd_prefix'] = $partner_data['data']['token_prefix'];
+            $this->data['giftd_prefix'] = $partner_data['data']['token_prefix'];
         }else{
-            $data['giftd_prefix'] = '';
+            $this->data['giftd_prefix'] = '';
         }
         
         $js_code = '';
 
         if((!$this->config->get('giftd_code_updated')) || ($this->config->get('giftd_code_updated') && ((time() - $this->config->get('giftd_code_updated')) > 24 * 3600))){
-            if($data['giftd_user_id'] && $data['giftd_api_key']){
-                $js_code = $this->get_js($data['giftd_user_id'], $data['giftd_api_key']);
+            if($this->data['giftd_user_id'] && $this->data['giftd_api_key']){
+                $js_code = $this->get_js($this->data['giftd_user_id'], $this->data['giftd_api_key']);
             }
-            $data['giftd_code_updated'] = time();
+            $this->data['giftd_code_updated'] = time();
         }else{
-            $data['giftd_code_updated'] = $this->config->get('giftd_code_updated');
+            $this->data['giftd_code_updated'] = $this->config->get('giftd_code_updated');
         } 
         if($js_code){
-            $data['giftd_js_code'] = $js_code;
+            $this->data['giftd_js_code'] = $js_code;
         }elseif($this->config->get('giftd_js_code')){
-            $data['giftd_js_code'] = $this->config->get('giftd_js_code');
+            $this->data['giftd_js_code'] = $this->config->get('giftd_js_code');
         }else{
-            $data['giftd_js_code'] = '';
+            $this->data['giftd_js_code'] = '';
         }               
 
-        
-        $data['header'] = $this->load->controller('common/header');
-        $data['column_left'] = $this->load->controller('common/column_left');
-        $data['footer'] = $this->load->controller('common/footer');
-
-        $this->response->setOutput($this->load->view('module/giftd.tpl', $data));
+        $this->template = 'module/giftd.tpl';
+        $this->children = array(
+            'common/header',
+            'common/footer'
+        );
+                
+        $this->response->setOutput($this->render());
     }
     
     protected function validate() {
@@ -140,12 +141,14 @@ class ControllerModuleGiftd extends Controller{
             $this->error['warning'] = $this->language->get('error_permission');
         }
                 
-        
-         return !$this->error; 
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }    
     }
     
     protected function get_data($user_id, $api_key){
-        
         $data = array(
             'email' => $this->config->get('config_email'),
             'phone' => $this->config->get('config_telephone'),
@@ -158,9 +161,8 @@ class ControllerModuleGiftd extends Controller{
         require_once(DIR_SYSTEM . 'GiftdApiClient.php');
         
         $client = new Giftd_Client($user_id, $api_key);
-        
         $result = $client->query("openCart/install", $data);
-       
+        
         return $result;
     }
     
