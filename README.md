@@ -6,7 +6,7 @@ Content Management System requirements
 * To install the module you need to have vQmod. [Settings manual vQmod](https://github.com/vqmod/vqmod/wiki/Installing-vQmod-on-OpenCart).
 
 
-Setting up of the GIFTD module
+Setting up of the GIFTD module into your online store
 --------------------------
 
 1. [Download the module’s archive](https://github.com/Giftd/giftd-opencart/) from the repository.
