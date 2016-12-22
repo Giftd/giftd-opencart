@@ -142,6 +142,11 @@
 
     <file name="catalog/controller/checkout/simplecheckout_cart.php">
         <operation error="skip">
+            <search position="after"><![CDATA[$this->_templateData['totals']]]></search>
+            <add><![CDATA[$total_amount = array_pop($total_data);
+        $this->data['total_amount'] = $total_amount['value'];]]></add>
+        </operation>
+        <operation error="skip">
             <search position="before"><![CDATA[foreach ($products as $product) {]]></search>
             <add><![CDATA[        $this->data['discount'] = 0;
         $products_cost = 0;]]></add>
@@ -156,6 +161,13 @@
         </operation>
         <operation error="skip">
             <search position="before"><![CDATA[$this->data['vouchers'] = array();]]></search>
+            <add><![CDATA[        if(isset($this->session->data['min_girtd_total']) && ($products_cost < $this->session->data['min_girtd_total'])){
+            unset($this->session->data['min_girtd_total']);
+            unset($this->session->data['voucher']);
+        }]]></add>
+        </operation>
+        <operation error="skip">
+            <search position="before"><![CDATA[$this->_templateData['vouchers'] = array();]]></search>
             <add><![CDATA[        if(isset($this->session->data['min_girtd_total']) && ($products_cost < $this->session->data['min_girtd_total'])){
             unset($this->session->data['min_girtd_total']);
             unset($this->session->data['voucher']);
@@ -233,7 +245,7 @@
 
     <file path="catalog/view/theme/*/template/common/" name="header.tpl">
         <operation error="skip">
-            <search position="after"><![CDATA[<body>]]></search>
+            <search position="after" offset="1"><![CDATA[</head>]]></search>
             <add><![CDATA[<script type="text/javascript"><!--
             <?php echo $giftd_js_code ?>
             //--></script>]]></add>
@@ -256,15 +268,9 @@ $(document).ready(function(){
 
     <file path="catalog/view/theme/*/template/checkout/" name="simplecheckout_cart.tpl">
         <operation error="skip">
-            <search position="bottom"><![CDATA[</script>]]></search>
-            <add><![CDATA[<?php $total = array_pop($totals);?> 
-<script type="text/javascript"><!--
-$(document).ready(function(){
-    $("input[name='voucher']").after('<input type="hidden" name="amount_total" value="<?php echo $total['value'] ?>" />');
-    $("input[name='amount_total']").after('<input type="hidden" name="discount_in_cart" value="<?php echo $discount ?>" />');
-});
-//--></script>
-]]></add>
+            <search position="after"><![CDATA[<span class="inputs"><?php echo $entry_voucher; ?>&nbsp;<input type="text" name="voucher" data-onchange="reloadAll" value="<?php echo $voucher; ?>" /></span>]]></search>
+            <add><![CDATA[<input type="hidden" name="amount_total" value="<?php echo $total_amount ?>
+        <input type="hidden" name="discount_in_cart" value="<?php echo $discount ?>]]></add>
         </operation>
     </file>
 
