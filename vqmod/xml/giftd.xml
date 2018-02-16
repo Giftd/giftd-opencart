@@ -40,7 +40,9 @@
                     $this->session->data['min_girtd_total'] = $min_total;
                     $discount  = $giftd_data->data->cannot_be_used_on_discounted_items;
                     $available = $giftd_data->data->amount_available;
-
+					if ($available == 0 && $discount_formatted != 0) {
+						$available = $this->request->post['amount_total']/100*$discount_formatted;
+					}
                     $data = array(
                         'code'=>$this->request->post['voucher'],
                         'from_name'=>'giftd',
@@ -186,7 +188,9 @@
                     $this->session->data['min_girtd_total'] = $min_total;
                     $discount  = $giftd_data->data->cannot_be_used_on_discounted_items;
                     $available = $giftd_data->data->amount_available;
-
+					if ($available == 0 && $discount_formatted != 0) {
+						$available = $this->request->post['amount_total']/100*$discount_formatted;
+					}
                     $data = array(
                         'code'=>$this->request->post['voucher'],
                         'from_name'=>'giftd',
