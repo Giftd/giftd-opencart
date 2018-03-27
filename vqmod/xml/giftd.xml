@@ -40,9 +40,7 @@
                     $this->session->data['min_girtd_total'] = $min_total;
                     $discount  = $giftd_data->data->cannot_be_used_on_discounted_items;
                     $available = $giftd_data->data->amount_available;
-					if ($available == 0 && $discount_formatted != 0) {
-						$available = $this->request->post['amount_total']/100*$discount_formatted;
-					}
+
                     $data = array(
                         'code'=>$this->request->post['voucher'],
                         'from_name'=>'giftd',
@@ -119,35 +117,37 @@
         </operation>
     </file>
     
-    <file name="catalog/controller/checkout/simplecheckout.php">
+    <file name="catalog/controller/payment/cod.php">
         <operation error="skip">
-            <search position="after"><![CDATA[$order_id = $this->order();]]></search>
-            <add><![CDATA[                if(isset($this->session->data['voucher']) && $this->session->data['voucher']){
-                    $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/charge?token=' . $this->session->data['voucher'] . '&api_key=' . $this->config->get('giftd_api_key') . '&amount=' . $this->session->data['amount_available'] .'&amount_total=' . $this->session->data['amount_total'] . '&external_id=' . $order_id);
+            <search position="after"><![CDATA[public function confirm()]]></search>
+            <add><![CDATA[
+                   
+                   
+                    if(isset($this->session->data['voucher']) && $this->session->data['voucher'] && (empty($this->session->data['proverka']) || $this->session->data['proverka'] != $this->session->data['voucher']) ){
+                    
+                    $this->session->data['proverka'] = $this->session->data['voucher'];
+                    $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/charge?token=' . $this->session->data['voucher'] . '&api_key=' . $this->config->get('giftd_api_key') . '&amount=' . $this->session->data['amount_available'] .'&amount_total=' . $this->session->data['amount_total'] . '&external_id=' . $this->session->data['order_id']);
                     $giftd_data = json_decode($giftd_data);
                     
                     unset($this->session->data['amount_available']);
                     unset($this->session->data['amount_total']);
-
                     if($giftd_data->type == 'error'){
-                        $this->session->data['error_voucher'] = 1;
+                        
+                        
                         
                         $this->load->model('checkout/voucher');
                         
                         unset($this->session->data['voucher']);
+                        unset($this->session->data['proverka']);
 
-                        $this->data['redirect'] = $this->url->link('checkout/cart');
+                        $this->redirect($this->url->link('checkout/simplecheckout','','SSL'));
                     }
-                }]]></add>
+                }
+                ]]></add>
         </operation>
     </file>
 
     <file name="catalog/controller/checkout/simplecheckout_cart.php">
-        <operation error="skip">
-            <search position="after"><![CDATA[$this->_templateData['totals']]]></search>
-            <add><![CDATA[$total_amount = array_pop($total_data);
-        $this->data['total_amount'] = $total_amount['value'];]]></add>
-        </operation>
         <operation error="skip">
             <search position="before"><![CDATA[foreach ($products as $product) {]]></search>
             <add><![CDATA[        $this->data['discount'] = 0;
@@ -169,28 +169,19 @@
         }]]></add>
         </operation>
         <operation error="skip">
-            <search position="before"><![CDATA[$this->_templateData['vouchers'] = array();]]></search>
-            <add><![CDATA[        if(isset($this->session->data['min_girtd_total']) && ($products_cost < $this->session->data['min_girtd_total'])){
-            unset($this->session->data['min_girtd_total']);
-            unset($this->session->data['voucher']);
-        }]]></add>
-        </operation>
-        <operation error="skip">
             <search position="before"><![CDATA[if (!empty($this->request->post['quantity'])) {]]></search>
-            <add><![CDATA[if(isset($this->request->post['voucher']) && (strripos($this->request->post['voucher'], $this->config->get('giftd_prefix')) !== false)){#
+            <add><![CDATA[if(isset($this->request->post['voucher']) && (strripos($this->request->post['voucher'], $this->config->get('giftd_prefix')) !== false)){
             $this->load->model('checkout/voucher');
 
                 $giftd_data = file_get_contents('http://api.giftd.ru/v1/gift/check?token=' . $this->request->post['voucher'] . '&api_key=' . $this->config->get('giftd_api_key'));
                 $giftd_data = json_decode($giftd_data);
-
+                
                 if($giftd_data->type == 'data'){
                     $min_total = $giftd_data->data->min_amount_total;
                     $this->session->data['min_girtd_total'] = $min_total;
                     $discount  = $giftd_data->data->cannot_be_used_on_discounted_items;
                     $available = $giftd_data->data->amount_available;
-					if ($available == 0 && $discount_formatted != 0) {
-						$available = $this->request->post['amount_total']/100*$discount_formatted;
-					}
+
                     $data = array(
                         'code'=>$this->request->post['voucher'],
                         'from_name'=>'giftd',
@@ -202,17 +193,28 @@
                         'amount'=>$available,
                     );
 
-                    if(!$min_total){
+                     if(!$min_total){
                         $this->model_checkout_voucher->add_giftd_vaucher($data, $this->request->post['amount_total']);
-                    }elseif($min_total < $this->request->post['amount_total']){
+                    }elseif($min_total <= $this->request->post['amount_total']){
                         if(!$discount){
                             $this->model_checkout_voucher->add_giftd_vaucher($data, $this->request->post['amount_total']); 
                         }elseif($discount && !$this->request->post['discount_in_cart']){
                             $this->model_checkout_voucher->add_giftd_vaucher($data, $this->request->post['amount_total']);
                         }
+                    }else{
+                       if(isset($this->request->post['voucher'])&& ($this->request->post['amount_total'] + $available) >= $min_total){
+                        
+                    }else{
+                        $this->model_checkout_voucher->remove_vaucher($this->request->post['voucher']);
+                
+                        unset($this->session->data['voucher']);
                     }
+                        }
+                        
+                    
                 }
-        }]]></add>
+        }
+        ]]></add>
         </operation>
     </file>
 
@@ -249,7 +251,7 @@
 
     <file path="catalog/view/theme/*/template/common/" name="header.tpl">
         <operation error="skip">
-            <search position="after" offset="1"><![CDATA[</head>]]></search>
+            <search position="after"><![CDATA[<body>]]></search>
             <add><![CDATA[<script type="text/javascript"><!--
             <?php echo $giftd_js_code ?>
             //--></script>]]></add>
@@ -272,9 +274,13 @@ $(document).ready(function(){
 
     <file path="catalog/view/theme/*/template/checkout/" name="simplecheckout_cart.tpl">
         <operation error="skip">
-            <search position="after"><![CDATA[<span class="inputs"><?php echo $entry_voucher; ?>&nbsp;<input type="text" name="voucher" data-onchange="reloadAll" value="<?php echo $voucher; ?>" /></span>]]></search>
-            <add><![CDATA[<input type="hidden" name="amount_total" value="<?php echo $total_amount ?>
-        <input type="hidden" name="discount_in_cart" value="<?php echo $discount ?>]]></add>
+            <search position="before"><![CDATA[<?php if (isset($modules['coupon'])) { ?>]]></search>
+            <add><![CDATA[<?php $total = array_pop($totals);?> 
+
+    <input type="hidden" name="amount_total" value="<?php echo $total['value']?>">
+    <input type="hidden" name="discount_in_cart" value="<?php echo $discount ?>">
+
+]]></add>
         </operation>
     </file>
 

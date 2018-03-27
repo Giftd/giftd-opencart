@@ -1,12 +1,12 @@
 <?php
 // Heading
-$_['heading_title']       = 'Подарочные карты GIFTD';
+$_['heading_title']       = 'Подарочные карты Giftd';
 
 // Text
 $_['text_module']         = 'Модули';
-$_['text_api_key']        = 'Ключ API GIFTD (api_key)';
-$_['text_user_id']        = 'ID пользователя GIFTD (user_id)';
-$_['text_partner_code']   = 'Код партнера GIFTD';
+$_['text_api_key']        = 'Ключ API Giftd (api_key)';
+$_['text_user_id']        = 'ID пользователя Giftd (user_id)';
+$_['text_partner_code']   = 'Код партнера Giftd';
 $_['text_prefix']         = 'Префикс кодов подарочных карт';
 
 // Error
